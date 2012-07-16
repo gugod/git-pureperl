@@ -75,6 +75,8 @@ has 'description' => (
     lazy    => 1,
     default => sub {
         my $self = shift;
+        local $/ = "\n";
+
         file( $self->gitdir, 'description' )->slurp( chomp => 1 );
     }
 );
@@ -153,6 +155,7 @@ sub ref_names {
     }
     my $packed_refs = file( $self->gitdir, 'packed-refs' );
     if ( -f $packed_refs ) {
+        local $/ = "\n";
         foreach my $line ( $packed_refs->slurp( chomp => 1 ) ) {
             next if $line =~ /^#/;
             my ( $sha1, my $name ) = split ' ', $line;
@@ -177,6 +180,7 @@ sub ref_sha1 {
     my @refs;
     my $dir = dir( $self->gitdir, 'refs' );
     return unless -d $dir;
+    local $/ = "\n";
 
     if ($wantref eq "HEAD") {
         my $file = file($self->gitdir, 'HEAD');
